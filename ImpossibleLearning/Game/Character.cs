@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using OpenTK;
 
 namespace ImpossibleLearning.Game
@@ -10,17 +12,26 @@ namespace ImpossibleLearning.Game
         public Vector2 Position { get; protected set; }
         public Vector2 Velocity { get; protected set; }
 
+        public World World { get; private set; }
+
 		public event PlayerKilledHandler Killed;
 
-		public Character()
+		public Character(World world)
 		{ 
-            Velocity = Vector2.Zero;
+            Velocity = new Vector2(0.05f, 0f);
             Position = Vector2.Zero;
+            World = world;
         }
 
         public void Update()
         {
-            
+            if (Position.Y < World.Tiles.Min(t => t.Key.Y) - 5)
+            {
+                Kill();
+                return;
+            }
+
+            Position = Position + Velocity;
         }
 
 		public void Jump()
@@ -33,6 +44,7 @@ namespace ImpossibleLearning.Game
 			{
 				Killed.Invoke(this, new EventArgs());
 			}
+            Velocity = Vector2.Zero;
 		}
 	}
 }

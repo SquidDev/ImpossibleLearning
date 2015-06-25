@@ -39,12 +39,12 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Game\Game.cs" />
     <Compile Include="Game\World.cs" />
     <Compile Include="Game\Character.cs" />
     <Compile Include="Game\Tile.cs" />
-    <Compile Include="Game\Coordinate.cs" />
     <Compile Include="Utils\Extensions.cs" />
+    <Compile Include="Game\Vector2i.cs" />
+    <Compile Include="Render\BasicRenderer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

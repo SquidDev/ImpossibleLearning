@@ -6,23 +6,13 @@ using OpenTK.Graphics.OpenGL;
 
 namespace ImpossibleLearning.Game
 {
-    public enum TileType
-    {
-        Air,
-        Spike,
-        Wall,
-    }
-
     public abstract class Tile
     {
-        public Coordinate Position { get; private set; }
+        public Vector2i Position { get; private set; }
 
-        public TileType Type { get; private set; }
-
-        public Tile(Coordinate position, TileType type)
+        public Tile(Vector2i position)
         {
             Position = position;
-            Type = type;
         }
 
         /// <summary>
@@ -30,14 +20,26 @@ namespace ImpossibleLearning.Game
         /// </summary>
         /// <param name="character">Character.</param>
         public virtual void Collide(Character character)
-        { 
-            // Kinda ugly.
-            switch (Type)
-            {
-                case ImpossibleLearning.Game.TileType.Spike:
-                    character.Kill();
-                    break;
-            }
+        { }
+
+        public virtual void Update() { }
+    }
+
+    public class Block : Tile
+    {
+        public Block(Vector2i position) : base(position) 
+        { }
+    }
+
+    public class Spike : Tile
+    {
+        public Spike(Vector2i position) : base(position) 
+        { }
+
+        public override void Collide(Character character)
+        {
+            base.Collide(character);
+            character.Kill();
         }
     }
 }

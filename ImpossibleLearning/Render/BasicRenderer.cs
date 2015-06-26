@@ -1,17 +1,30 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using ImpossibleLearning.Game;
+using ImpossibleLearning.Levels;
+using ImpossibleLearning.Utils;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
-using ImpossibleLearning.Game;
-
 
 namespace ImpossibleLearning.Render
 {
     public class BasicRenderer : GameWindow
     {
         protected World world = new World();
+        
+        public BasicRenderer()
+        {
+        	LevelManager manager = new LevelManager(world);
+        	var levels = LevelParser.FromLevels();
+        	
+        	for(int i = 0; i < 10; i++)
+        	{
+        		manager.Add(levels.Values.RandomElement());
+        	}
+        }
 
         protected override void OnLoad(EventArgs e)
         {

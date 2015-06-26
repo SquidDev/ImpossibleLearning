@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace ImpossibleLearning.Utils
 {
@@ -53,6 +54,43 @@ namespace ImpossibleLearning.Utils
 
             return val;
         }
+        
+        public static IEnumerable<TResult> WithIndex<TValue, TResult>(this IEnumerable<TValue> enumerable, Func<int, TValue, TResult> selector)
+        {
+        	int index = 0;
+        	foreach(TValue item in enumerable)
+        	{
+        		yield return selector(index, item);
+        		index++;
+        	}
+        }
+        
+        public static T RandomElement<T>(this IEnumerable<T> enumerable)
+		{
+			return enumerable.RandomElement(new Random());
+		}
+		
+		public static T RandomElement<T>(this IEnumerable<T> enumerable, Random rand)
+		{
+			int index = rand.Next(0, enumerable.Count());
+			return enumerable.ElementAt(index);
+		}
+		
+		public static string Format<T>(this IEnumerable<T> items)
+		{ 
+			StringBuilder builder = new StringBuilder().Append('[');
+			bool first = true;
+			
+			foreach(var item in items) 
+			{
+				if(!first) builder.Append(',');
+				first = false;
+				
+				builder.Append('\n').Append(item.ToString());
+			}
+		
+			return builder.Append(']').ToString();
+		}
     }
 }
 

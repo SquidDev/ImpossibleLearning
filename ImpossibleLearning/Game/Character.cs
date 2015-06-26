@@ -5,16 +5,12 @@ using OpenTK;
 
 namespace ImpossibleLearning.Game
 {
-	public delegate void PlayerKilledHandler(object sender, EventArgs e);
-
 	public class Character
 	{
         public Vector2 Position { get; protected set; }
         public Vector2 Velocity { get; protected set; }
 
         public World World { get; private set; }
-
-		public event PlayerKilledHandler Killed;
 
 		public Character(World world)
 		{ 
@@ -25,11 +21,11 @@ namespace ImpossibleLearning.Game
 
         public void Update()
         {
-            if (Position.Y < World.Tiles.Min(t => t.Key.Y) - 5)
-            {
+        	if(World.Tiles.Count > 0 && Position.Y < World.Tiles.Min(t => t.Key.Y) - 5)
+        	{
                 Kill();
                 return;
-            }
+        	}
 
             Position = Position + Velocity;
         }
@@ -40,11 +36,17 @@ namespace ImpossibleLearning.Game
 
 		public void Kill()
 		{
-			if (Killed != null)
-			{
-				Killed.Invoke(this, new EventArgs());
-			}
-            Velocity = Vector2.Zero;
+			throw new CharacterKilledException(this);
+		}
+	}
+	
+	public class CharacterKilledException : Exception
+	{
+		public Character Character { get; private set; }
+		
+		public CharacterKilledException(Character character)
+		{
+			Character = Character;
 		}
 	}
 }

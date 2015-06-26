@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -35,22 +35,31 @@
       <HintPath>..\packages\OpenTK.1.1.1589.5942\lib\NET40\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Levels\Level.cs" />
+    <Compile Include="Levels\LevelParser.cs" />
+    <Compile Include="Levels\TileType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Game\World.cs" />
     <Compile Include="Game\Character.cs" />
     <Compile Include="Game\Tile.cs" />
     <Compile Include="Utils\Extensions.cs" />
-    <Compile Include="Game\Vector2i.cs" />
     <Compile Include="Render\BasicRenderer.cs" />
+    <Compile Include="Utils\Vector2i.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <EmbeddedResource Include="Levels\Levels.xml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Levels" />
     <Folder Include="Render\" />
     <Folder Include="Game\" />
     <Folder Include="Utils\" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using ImpossibleLearning.Utils;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;

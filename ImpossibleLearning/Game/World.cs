@@ -14,10 +14,8 @@ namespace ImpossibleLearning.Game
 
         public World()
         {
-            Width = 50;
+            Width = 20;
             Character = new Character(this);
-
-            Add(new Block(new Vector2i(0, 0)));
         }
 
         public void Update()

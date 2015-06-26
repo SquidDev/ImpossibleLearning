@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Drawing;
+using ImpossibleLearning.Levels;
+using ImpossibleLearning.Render;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
-using ImpossibleLearning.Render;
 
 namespace ImpossibleLearning
 {

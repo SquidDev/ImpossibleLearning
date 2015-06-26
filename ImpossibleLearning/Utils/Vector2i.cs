@@ -1,9 +1,11 @@
 ﻿using System;
 
-namespace ImpossibleLearning.Game
+namespace ImpossibleLearning.Utils
 {
 	public class Vector2i
 	{
+		public static readonly Vector2i Zero = new Vector2i(0, 0);
+
 		public int X { get; protected set; }
         public int Y { get; protected set; }
 

@@ -1,0 +1,12 @@
+﻿<?xml version="1.0"?>
+<Levels>
+	<Level Id="0" Difficulty="0">
+		<Row>=    =</Row>
+		<Row>XXXXXX</Row>
+	</Level>
+
+	<Level Id="1" Difficulty="0">
+		<Row>= ^  =</Row>
+		<Row>XXXXXX</Row>
+	</Level>
+</Levels>

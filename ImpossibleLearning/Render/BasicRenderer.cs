@@ -21,11 +21,10 @@ namespace ImpossibleLearning.Render
         
         LevelManager manager;
         Dictionary<int, Level> levels = LevelParser.FromLevels();
-        
+
         public BasicRenderer()
         {
-        	manager = new LevelManager(world);
-        	manager.Add(levels[0]);
+            manager = new LevelManager(world);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -40,10 +39,11 @@ namespace ImpossibleLearning.Render
             GL.Viewport(0, 0, Width, Height);
         }
 
+        protected float previousPress = 0;
+
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
-            if(dead) return;
 
             if (Keyboard[Key.Escape])
             {
@@ -51,23 +51,36 @@ namespace ImpossibleLearning.Render
                 return;
             }
 
-            try 
+            if (world.Tiles.Count == 0 || world.Character.Position.X > world.Tiles.Keys.Max(x => x.X) - Width)
             {
-	            world.Update();
-	
-	            if (Keyboard[Key.Space])
-	            {
-	                world.Character.Jump();
-	            }
-	
-	            if(world.Tiles.Count == 0 || world.Character.Position.X > world.Tiles.Keys.Max(x => x.X) - 10)
-	            {
-	            	manager.Add(levels.Values.RandomElement());
-	            }
-            } 
-            catch(CharacterKilledException error)
+                manager.Add(levels.Values.RandomElement());
+            }
+                
+            if (dead) return;
+
+            if (!Keyboard[Key.ControlLeft])
             {
-            	dead = true;
+                if (Keyboard[Key.Right])
+                {
+                    previousPress++;
+                }
+                else
+                {
+                    previousPress = 0;
+                }
+
+                if (previousPress < 10) return;
+                previousPress = 0;
+            }
+
+            try
+            {
+                world.Update();
+                if (Keyboard[Key.Space]) world.Character.Jump();
+            }
+            catch (CharacterKilledException error)
+            {
+                dead = true;
             }
         }
 
@@ -113,27 +126,30 @@ namespace ImpossibleLearning.Render
             GL.Color3(Color.FromArgb(255, 175, 0));
             GL.Vertex2(world.Character.Position.X, world.Character.Position.Y);
             GL.Vertex2(world.Character.Position.X, world.Character.Position.Y + 1);
-            GL.Vertex2(world.Character.Position.X + 1, world.Character.Position.Y+1);
-            GL.Vertex2(world.Character.Position.X+1, world.Character.Position.Y);
+            GL.Vertex2(world.Character.Position.X + 1, world.Character.Position.Y + 1);
+            GL.Vertex2(world.Character.Position.X + 1, world.Character.Position.Y);
             
             GL.End();
             
             
-            foreach(Tile tile in world.Character.GetCollides(world.Character.Position))
+            foreach (Tile tile in world.Character.GetCollides())
             {
-            	GL.Begin(PrimitiveType.LineLoop);
+                GL.Begin(PrimitiveType.LineLoop);
             	
-            	if(Resolver.Handle<ImpossibleLearning.Physics.Rectangle>(world.Character, tile)) {
-            		GL.Color3((byte)0, (byte)0, (byte)255);
-            	} else {
-            		GL.Color3((byte)255, (byte)0, (byte)0);
-            	}
-            	GL.Vertex2(tile.Position.X, tile.Position.Y);
+                if (world.Character.Collides(tile) != null)
+                {
+                    GL.Color3((byte)0, (byte)0, (byte)255);
+                }
+                else
+                {
+                    GL.Color3((byte)255, (byte)0, (byte)0);
+                }
+                GL.Vertex2(tile.Position.X, tile.Position.Y);
                 GL.Vertex2(tile.Position.X, tile.Position.Y + 1);
                 GL.Vertex2(tile.Position.X + 1, tile.Position.Y + 1);
                 GL.Vertex2(tile.Position.X + 1, tile.Position.Y);
                 
-            	GL.End();
+                GL.End();
             }
 
             GL.PopMatrix();

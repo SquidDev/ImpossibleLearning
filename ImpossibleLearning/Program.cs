@@ -18,9 +18,10 @@ namespace ImpossibleLearning
 			{
 				// Run the game at 60 updates per second
 				game.Run(60.0);
+                game.Exit();
 			}
             
-            Console.ReadKey(true);
+            // Console.ReadKey(true);
 		}
 	}
 }

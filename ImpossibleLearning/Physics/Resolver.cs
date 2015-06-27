@@ -28,7 +28,7 @@ namespace ImpossibleLearning.Physics
 			
 			// Apply impulse
 			Vector2 impulseVector = impulse * collision.Normal;
-			
+
 			a.Velocity -= invA * impulseVector;
 			b.Velocity += invB * impulseVector;
 		}
@@ -41,8 +41,8 @@ namespace ImpossibleLearning.Physics
 				
 			float invA = a.InverseMass, invB = b.InverseMass;
 			Vector2 correction = Math.Max(collision.Penetration - slop, 0.0f) / (invA + invB) * percent * collision.Normal;
-			if(!a.Fixed) a.Position -= invA * correction;
-			if(!b.Fixed) b.Position += invB * correction;
+			if(!a.Fixed) a.Position -= correction;
+			if(!b.Fixed) b.Position += correction;
 		}
 		
 		public static bool Handle<T>(T a, T b)
@@ -50,7 +50,6 @@ namespace ImpossibleLearning.Physics
 		{
 			Collision collision = a.Collides(b);
 			if(collision != null) {
-				Console.WriteLine("Collides");
 				ResolveCollision(a, b, collision);
 				Correct(a, b, collision);
 				return true;

@@ -14,7 +14,7 @@ namespace ImpossibleLearning.Game
 
         public Character(World world) : base(0, 0, 1, 1)
 		{ 
-            Velocity = new Vector2(0.1f, 0f);
+            Velocity = new Vector2(0.2f, 1f);
             Density = 1;
             World = world;
         }
@@ -31,13 +31,13 @@ namespace ImpossibleLearning.Game
             Position += Velocity;
             
             bool colliding = false;
-            foreach(Tile tile in GetCollides(Position).Where(t => Resolver.Handle<Rectangle>(this, t)))
+            foreach(Tile tile in GetCollides().Where(t => Resolver.Handle<Rectangle>(this, t)))
             {
             	tile.Collide(this);
             	colliding = true;
             }
             
-            if(!colliding) 
+            if(!colliding)
             {
             	Velocity -= new Vector2(0, -0.01f);
             }
@@ -47,9 +47,9 @@ namespace ImpossibleLearning.Game
             }
         }
         
-        public IEnumerable<Tile> GetCollides(Vector2 position)
+        public IEnumerable<Tile> GetAdjacent()
         {
-        	int x = (int)Math.Floor(position.X), y = (int)Math.Floor(position.Y);
+        	int x = (int)Math.Floor(Position.X), y = (int)Math.Floor(Position.Y);
         	
         	List<Tile> tiles = new List<Tile>();
         	Tile t;
@@ -66,17 +66,17 @@ namespace ImpossibleLearning.Game
         	t = World.Tiles.GetOrDefault(new Vector2i(x, y + 1));
         	if(t != null) tiles.Add(t);
         	
-        	return tiles.Where(tile => Collides(position.X, position.Y, tile.Position.X, tile.Position.Y));
+            return tiles;
         }
-        
-        protected bool Collides(float x, float y, float oX, float oY)
+
+        public IEnumerable<Tile> GetCollides()
         {
-        	return oX <= x + 1 && x <= oX + 1 && oY <= y + 1 && y <= oY + 1;
+            return GetAdjacent().Where(tile => tile.Collides(this) != null).ToList();
         }
 
 		public void Jump()
 		{
-			if(GetCollides(Position).Count() > 0) Velocity = new Vector2(Velocity.X, Velocity.Y - 0.25f);
+			if(GetCollides().Count() > 0) Velocity = new Vector2(Velocity.X, Velocity.Y - 0.25f);
 		}
 
 		public void Kill()

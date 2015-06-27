@@ -7,13 +7,14 @@ using OpenTK.Graphics.OpenGL;
 
 namespace ImpossibleLearning.Game
 {
-    public abstract class Tile
+	public abstract class Tile : ImpossibleLearning.Physics.Rectangle
     {
-        public Vector2i Position { get; private set; }
+        public new Vector2i Position { get; private set; }
 
-        public Tile(Vector2i position)
+        public Tile(Vector2i position) : base(position.X, position.Y, 1, 1)
         {
             Position = position;
+            Fixed = true;
         }
 
         /// <summary>

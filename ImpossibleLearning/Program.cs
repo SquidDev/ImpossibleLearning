@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using ImpossibleLearning.Game;
 using ImpossibleLearning.Levels;
 using ImpossibleLearning.Render;
 using OpenTK;
@@ -18,6 +19,8 @@ namespace ImpossibleLearning
 				// Run the game at 60 updates per second
 				game.Run(60.0);
 			}
+            
+            Console.ReadKey(true);
 		}
 	}
 }

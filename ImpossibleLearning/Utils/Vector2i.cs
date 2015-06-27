@@ -72,6 +72,11 @@ namespace ImpossibleLearning.Utils
         {
             return new Vector2i(a.X / b, a.Y / b);
         }
+        
+        public static Vector2i operator -(Vector2i a)
+        {
+            return new Vector2i(-a.X, -a.Y);
+        }
 	}
 }
 

@@ -15,6 +15,7 @@ namespace ImpossibleLearning.Utils
             }
         }
 
+        #region Get or default
         public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> def)
         {
             TValue val;
@@ -23,7 +24,7 @@ namespace ImpossibleLearning.Utils
             return def(key);
         }
 
-        public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue def)
+        public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue def = default(TValue))
         {
             TValue val;
             if (dictionary.TryGetValue(key, out val)) return val;
@@ -54,6 +55,7 @@ namespace ImpossibleLearning.Utils
 
             return val;
         }
+        #endregion
         
         public static IEnumerable<TResult> WithIndex<TValue, TResult>(this IEnumerable<TValue> enumerable, Func<int, TValue, TResult> selector)
         {

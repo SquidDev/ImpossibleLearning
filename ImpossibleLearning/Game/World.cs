@@ -20,8 +20,8 @@ namespace ImpossibleLearning.Game
 
         public void Update()
         {
-            int cull = (int)(Character.Position.X - (Width / 2)) - 1;
-            Tiles.RemoveAll(pair => pair.Key.X < cull);
+            // int cull = (int)(Character.Position.X - (Width / 2)) - 1;
+            // Tiles.RemoveAll(pair => pair.Key.X < cull);
 
             foreach (Tile Tile in Tiles.Values)
             {

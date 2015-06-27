@@ -7,13 +7,7 @@ namespace ImpossibleLearning.Physics
 	{
 		public Vector2 Center { get; protected set; }
 		public float Radius { get; protected set; }
-		
-		public float Density { get; protected set; }
-		
-		public override float Mass {
-			get { return (float)Math.PI * Radius * Radius * Density; }
-		}
-		
+
 		public override Vector2 Position
 		{
 			get { return Center; }

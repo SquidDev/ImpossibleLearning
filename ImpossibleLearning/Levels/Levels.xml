@@ -6,20 +6,20 @@
 	</Level>
 
 	<Level Id="1" Difficulty="1">
-		<Row>= ^  =</Row>
-		<Row>XXXXXX</Row>
+		<Row>= ^     =</Row>
+		<Row>XXXXXXXXX</Row>
 	</Level>
 
-	<Level Id="2" Difficulty="2">
+	<!---<Level Id="2" Difficulty="2">
 		<Row>= ^^ =</Row>
 		<Row>XXXXXX</Row>
 	</Level>
 
-	<!--<Level Id="3" Difficulty="2">
-		<Row>     =</Row>
-		<Row>     X</Row>
-		<Row>= XX  </Row>
-		<Row>XX    </Row>
+	<Level Id="3" Difficulty="2">
+		<Row>      =</Row>
+		<Row>      X</Row>
+		<Row>=  XX  </Row>
+		<Row>XX     </Row>
 	</Level>
 
 	<Level Id="4" Difficulty="0">

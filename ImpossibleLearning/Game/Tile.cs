@@ -41,7 +41,7 @@ namespace ImpossibleLearning.Game
         public override void Collide(Character character)
         {
             base.Collide(character);
-            character.Kill();
+            character.Kill("Spikey");
         }
     }
 }

@@ -16,15 +16,18 @@ namespace ImpossibleLearning.Render
 {
     public class BasicRenderer : GameWindow
     {
-        protected World world = new World();
-        protected bool dead = false;
+        protected World world;
         
         LevelManager manager;
         Dictionary<int, Level> levels = LevelParser.FromLevels();
 
-        public BasicRenderer()
+        protected int deadCooldown = 0;
+
+        public void Setup()
         {
+            world = new World();
             manager = new LevelManager(world);
+            manager.Add(levels[0]);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -51,14 +54,18 @@ namespace ImpossibleLearning.Render
                 return;
             }
 
-            if (world.Tiles.Count == 0 || world.Character.Position.X > world.Tiles.Keys.Max(x => x.X) - Width)
+            if (deadCooldown > 0)
             {
-                manager.Add(levels.Values.RandomElement());
+                deadCooldown--;
+                return;
             }
-                
-            if (dead) return;
+            else if (deadCooldown == 0)
+            {
+                Setup();
+                deadCooldown--;
+            }
 
-            if (!Keyboard[Key.ControlLeft])
+            if (Keyboard[Key.ControlLeft])
             {
                 if (Keyboard[Key.Right])
                 {
@@ -73,25 +80,36 @@ namespace ImpossibleLearning.Render
                 previousPress = 0;
             }
 
+            if (world.Tiles.Count == 0 || world.Character.Position.X > world.Tiles.Keys.Max(x => x.X) - Width)
+            {
+                manager.Add(levels.Values.RandomElement());
+            }
+
             try
             {
                 world.Update();
                 if (Keyboard[Key.Space]) world.Character.Jump();
             }
-            catch (CharacterKilledException error)
+            catch (CharacterKilledException err)
             {
-                dead = true;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("You died: {0}", err.Message);
+                Console.ForegroundColor = ConsoleColor.White;
+
+                deadCooldown = 30;
             }
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
+            if (world == null) return;
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
+
 
             int size = Width / world.Width;
             int width = Width / size, height = Height / size;
@@ -117,37 +135,33 @@ namespace ImpossibleLearning.Render
                     GL.Color3(Color.FromArgb(0, 0, 255));
                 }
 
-                GL.Vertex2(tile.Position.X, tile.Position.Y);
-                GL.Vertex2(tile.Position.X, tile.Position.Y + 1);
-                GL.Vertex2(tile.Position.X + 1, tile.Position.Y + 1);
-                GL.Vertex2(tile.Position.X + 1, tile.Position.Y);
+                Draw(tile);
             }
 
             GL.Color3(Color.FromArgb(255, 175, 0));
-            GL.Vertex2(world.Character.Position.X, world.Character.Position.Y);
-            GL.Vertex2(world.Character.Position.X, world.Character.Position.Y + 1);
-            GL.Vertex2(world.Character.Position.X + 1, world.Character.Position.Y + 1);
-            GL.Vertex2(world.Character.Position.X + 1, world.Character.Position.Y);
+            Draw(world.Character);
             
             GL.End();
             
             
-            foreach (Tile tile in world.Character.GetCollides())
+            foreach (Tile tile in world.Character.GetAdjacent())
             {
                 GL.Begin(PrimitiveType.LineLoop);
             	
-                if (world.Character.Collides(tile) != null)
+                if (tile.Collides(world.Character))
+                {
+                    GL.Color3((byte)255, (byte)0, (byte)0);
+                }
+                else if (tile.Touches(world.Character))
                 {
                     GL.Color3((byte)0, (byte)0, (byte)255);
                 }
                 else
                 {
-                    GL.Color3((byte)255, (byte)0, (byte)0);
+                    GL.Color3((byte)0, (byte)255, (byte)0);
                 }
-                GL.Vertex2(tile.Position.X, tile.Position.Y);
-                GL.Vertex2(tile.Position.X, tile.Position.Y + 1);
-                GL.Vertex2(tile.Position.X + 1, tile.Position.Y + 1);
-                GL.Vertex2(tile.Position.X + 1, tile.Position.Y);
+
+                Draw(tile);
                 
                 GL.End();
             }
@@ -155,6 +169,14 @@ namespace ImpossibleLearning.Render
             GL.PopMatrix();
 
             SwapBuffers();
+        }
+
+        protected void Draw(ImpossibleLearning.Physics.Rectangle rect)
+        {
+            GL.Vertex2(rect.Min.X, rect.Min.Y);
+            GL.Vertex2(rect.Min.X, rect.Max.Y);
+            GL.Vertex2(rect.Max.X, rect.Max.Y);
+            GL.Vertex2(rect.Max.X, rect.Min.Y);
         }
     }
 }

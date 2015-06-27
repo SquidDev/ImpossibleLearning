@@ -8,91 +8,90 @@ using OpenTK;
 
 namespace ImpossibleLearning.Game
 {
-	public class Character : Rectangle
-	{
+    public class Character : Rectangle
+    {
         public World World { get; private set; }
 
-        public Character(World world) : base(0, 0, 1, 1)
-		{ 
-            Velocity = new Vector2(0.2f, 1f);
-            Density = 1;
+        public Character(World world)
+            : base(0, 0, 1, 1)
+        { 
+            Velocity = new Vector2(0.2f, 0f);
             World = world;
         }
 
         public void Update()
         {
-        	if(World.Tiles.Count > 0 && Position.Y > World.Tiles.Max(t => t.Key.Y) + 5)
-        	{
-                Kill();
-                return;
-        	}
-
-        	Console.WriteLine("{0} @ {1}", Position, Velocity);
-            Position += Velocity;
-            
-            bool colliding = false;
-            foreach(Tile tile in GetCollides().Where(t => Resolver.Handle<Rectangle>(this, t)))
+            if (World.Tiles.Count > 0 && Position.Y > World.Tiles.Max(t => t.Key.Y) + 5)
             {
-            	tile.Collide(this);
-            	colliding = true;
+                Kill("Fell out of the world");
+                return;
+            }
+                
+            Position += Velocity;
+
+            foreach (Tile tile in GetCollides().Where(t => t.Collides(this)))
+            {
+                tile.Resolve(this);
+                tile.Collide(this);
             }
             
-            if(!colliding)
+            if (GetAdjacent().Where(t => t.Touches(this)).Where(t => t.Min.Y <= Min.X).Count() == 0)
             {
-            	Velocity -= new Vector2(0, -0.01f);
+                Velocity -= new Vector2(0, -0.015f);
             }
             else
             {
-            	Velocity = new Vector2(Velocity.X, 0);
+                Velocity = new Vector2(Velocity.X, 0);
             }
         }
-        
+
         public IEnumerable<Tile> GetAdjacent()
         {
-        	int x = (int)Math.Floor(Position.X), y = (int)Math.Floor(Position.Y);
+            int x = (int)Math.Floor(Position.X), y = (int)Math.Floor(Position.Y);
         	
-        	List<Tile> tiles = new List<Tile>();
-        	Tile t;
+            List<Tile> tiles = new List<Tile>();
+            Tile t;
         	
-        	t = World.Tiles.GetOrDefault(new Vector2i(x, y));
-        	if(t != null) tiles.Add(t);
+            t = World.Tiles.GetOrDefault(new Vector2i(x, y));
+            if (t != null) tiles.Add(t);
         	
-        	t = World.Tiles.GetOrDefault(new Vector2i(x + 1, y));
-        	if(t != null) tiles.Add(t);
+            t = World.Tiles.GetOrDefault(new Vector2i(x + 1, y));
+            if (t != null) tiles.Add(t);
         	
-        	t = World.Tiles.GetOrDefault(new Vector2i(x + 1, y + 1));
-        	if(t != null) tiles.Add(t);
+            t = World.Tiles.GetOrDefault(new Vector2i(x + 1, y + 1));
+            if (t != null) tiles.Add(t);
         	
-        	t = World.Tiles.GetOrDefault(new Vector2i(x, y + 1));
-        	if(t != null) tiles.Add(t);
+            t = World.Tiles.GetOrDefault(new Vector2i(x, y + 1));
+            if (t != null) tiles.Add(t);
         	
             return tiles;
         }
 
         public IEnumerable<Tile> GetCollides()
         {
-            return GetAdjacent().Where(tile => tile.Collides(this) != null).ToList();
+            return GetAdjacent().Where(tile => tile.Collides(this)).ToList();
         }
 
-		public void Jump()
-		{
-			if(GetCollides().Count() > 0) Velocity = new Vector2(Velocity.X, Velocity.Y - 0.25f);
-		}
+        public void Jump()
+        {
+            if (GetAdjacent().Where(t => t.Touches(this)).Where(t => t.Min.Y <= Min.X).Count() > 0) Velocity = new Vector2(Velocity.X, Velocity.Y - 0.30f);
+        }
 
-		public void Kill()
-		{
-			// throw new CharacterKilledException(this);
-		}
-	}
-	
-	public class CharacterKilledException : Exception
-	{
-		public Character Character { get; private set; }
-		
-		public CharacterKilledException(Character character)
-		{
-			Character = Character;
-		}
-	}
+        public void Kill(String message = "Because")
+        {
+            throw new CharacterKilledException(message, this);
+        }
+    }
+
+    public class CharacterKilledException : Exception
+    {
+        public Character Character { get; private set; }
+
+        public CharacterKilledException(String message, Character character)
+            : base(message)
+        {
+            Character = Character;
+        }
+    }
 }
 
